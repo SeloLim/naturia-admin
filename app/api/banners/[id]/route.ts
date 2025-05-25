@@ -16,15 +16,17 @@ const updateBannerSchema = z
 
 type UpdateBannerPayload = z.infer<typeof updateBannerSchema>;
 
+type RouteParams = {
+  params: Promise<{ id: string }>;
+};
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteParams
 ) {
   const awaitedParams = await params;
   const { id } = awaitedParams;
 
-  // Validasi ID: pastikan ada dan berupa angka string
   if (typeof id !== "string" || !/^\d+$/.test(id)) {
     return NextResponse.json(
       { message: "ID banner tidak valid" },
@@ -32,17 +34,13 @@ export async function PATCH(
     );
   }
 
-  const bannerId = parseInt(id, 10); // Ubah ID menjadi angka
+  const bannerId = parseInt(id, 10);
 
   try {
-    // Mengambil body request sebagai JSON (async)
     const body = await request.json();
-
-    // Validasi data update menggunakan Zod
     const validationResult = updateBannerSchema.safeParse(body);
 
     if (!validationResult.success) {
-      // Jika validasi gagal
       return NextResponse.json(
         {
           message: "Data format tidak valid",
@@ -99,7 +97,6 @@ export async function PATCH(
       );
     }
 
-    // Jika berhasil, kirim respons 200 OK
     return NextResponse.json(updatedBanner, { status: 200 });
   } catch (error: unknown) {
     console.error("Error di API route /api/banners/${id} (PATCH):", error);
@@ -114,15 +111,13 @@ export async function PATCH(
   }
 }
 
-// ** Export handler DELETE (BARU) **
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteParams
 ) {
   const awaitedParams = await params;
   const { id } = awaitedParams;
 
-  // Validasi ID: pastikan ada dan berupa angka string
   if (typeof id !== "string" || !/^\d+$/.test(id)) {
     return NextResponse.json(
       { message: "ID banner tidak valid" },
@@ -130,30 +125,23 @@ export async function DELETE(
     );
   }
 
-  const bannerId = parseInt(id, 10); // Ubah ID menjadi angka
+  const bannerId = parseInt(id, 10); 
 
   try {
-    // Lakukan operasi DELETE ke tabel 'banners' berdasarkan ID
-    // Supabase delete tidak mengembalikan data secara default, hanya status
     const { error } = await supabase
       .from("banners")
       .delete()
       .eq("id", bannerId)
-      .maybeSingle(); // Gunakan maybeSingle() jika yakin hanya menghapus 0 atau 1 row
+      .maybeSingle();
 
     if (error) {
       console.error("Error Supabase saat DELETE:", error);
-      // Cek error spesifik jika row dengan ID tersebut tidak ditemukan saat delete
-      // Meskipun delete biasanya tidak memberikan error 404, bergantung pada RLS dan versi PostgREST
-      // Tapi penanganan error umum Supabase tetap diperlukan
       if (error.code === "PGRST116") {
-        // Kode error Supabase untuk "Not Found"
         return NextResponse.json(
           { message: "Banner dengan ID tersebut tidak ditemukan" },
           { status: 404 }
         );
       }
-      // Error lain saat delete
       return NextResponse.json(
         {
           message: "Error menghapus data banner di database",
@@ -162,13 +150,8 @@ export async function DELETE(
         { status: 500 }
       );
     }
-
-    // Jika berhasil, Supabase delete tidak mengembalikan data, hanya null untuk 'data' dan 'count' jika berhasil menghapus.
-    // Kita bisa cek 'count' jika diaktifkan di PostgREST atau asumsikan berhasil jika tidak ada error.
-    // Mengembalikan status 200 OK atau 204 No Content (sesuai preferensi API)
-    return new Response(null, { status: 204 }); // 204 No Content - Respons sukses tanpa body
+    return new Response(null, { status: 204 }); 
   } catch (error: unknown) {
-    // Menangkap error lain yang mungkin terjadi
     console.error(`Error di API route /api/banners/${id} (DELETE):`, error);
     let errorMessage = "Terjadi kesalahan server internal";
     if (error instanceof Error) {
@@ -180,9 +163,3 @@ export async function DELETE(
     );
   }
 }
-
-// Kamu juga bisa tambahkan handler GET (untuk mengambil 1 banner)
-// export async function GET(request: Request, { params }: { params: { id: string } }) { ... }
-
-// Dan handler DELETE (untuk menghapus 1 banner)
-// export async function DELETE(request: Request, { params }: { params: { id: string } }) { ... }
