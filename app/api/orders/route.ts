@@ -29,10 +29,11 @@ const placeOrderSchema = z.object({
   total: z.number(),
 });
 
-const allowedOrigin =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:3001"
-    : "YOUR_PRODUCTION_FRONTEND_URL";
+const allowedOrigin = process.env.NEXT_PUBLIC_ALLOWED_ORIGIN!;
+
+if (!allowedOrigin) {
+  throw new Error("NEXT_PUBLIC_ALLOWED_ORIGIN is not defined");
+}
 
 function addCorsHeaders(response: NextResponse): NextResponse {
   response.headers.set("Access-Control-Allow-Origin", allowedOrigin);

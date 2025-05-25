@@ -41,10 +41,11 @@ if (!supabaseUrl || !supabaseServiceRoleKey) {
 
 const supabase = createClient(supabaseUrl!, supabaseServiceRoleKey!);
 
-const allowedOrigin =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:3001"
-    : "YOUR_PRODUCTION_FRONTEND_URL"; // <--- CHANGE THIS IN PRODUCTION!
+const allowedOrigin = process.env.NEXT_PUBLIC_ALLOWED_ORIGIN!;
+
+if (!allowedOrigin) {
+  throw new Error("NEXT_PUBLIC_ALLOWED_ORIGIN is not defined");
+}
 
 // Helper function to add CORS headers
 function addCorsHeaders(response: NextResponse): NextResponse {

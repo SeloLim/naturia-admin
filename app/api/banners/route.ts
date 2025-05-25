@@ -1,9 +1,8 @@
 // app/api/banners/route.ts
-import { createClient } from '@supabase/supabase-js';
-import { NextResponse } from 'next/server'; // Gunakan NextResponse untuk respons
+import { supabase } from "@/lib/supabase/service";
+import { NextResponse } from 'next/server';
 import { z } from "zod";
 
-// Schema untuk validasi data POST
 const createBannerSchema = z.object({
     title: z.string().min(1).max(150),
     image_url: z.string().min(1).url(),
@@ -15,17 +14,27 @@ const createBannerSchema = z.object({
 
 type CreateBannerPayload = z.infer<typeof createBannerSchema>;
 
-// Inisialisasi klien Supabase (Server-side)
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-// Cek saat startup (bukan di dalam handler Request untuk performa)
-if (!supabaseUrl || !supabaseServiceRoleKey) {
-    console.error("!!! Variabel lingkungan Supabase tidak disetel. Tidak dapat terhubung ke DB. !!!");
+const allowedOrigin = process.env.NEXT_PUBLIC_ALLOWED_ORIGIN!;
+
+if (!allowedOrigin) {
+  throw new Error("NEXT_PUBLIC_ALLOWED_ORIGIN is not defined");
 }
 
-const supabase = createClient(supabaseUrl!, supabaseServiceRoleKey!);
+function addCorsHeaders(response: NextResponse): NextResponse {
+  response.headers.set("Access-Control-Allow-Origin", allowedOrigin);
+  response.headers.set("Access-Control-Allow-Methods", "POST, GET, PATCH, DELETE, OPTIONS");
+  response.headers.set(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization"
+  );
+  response.headers.set("Access-Control-Max-Age", "86400");
+  return response;
+}
 
+export async function OPTIONS() {
+  return addCorsHeaders(new NextResponse(null, { status: 200 }));
+}
 
 // Handler untuk metode POST
 export async function POST(request: Request) {
@@ -98,19 +107,10 @@ export async function GET() {
       if (error) {
           console.error('Error Supabase saat SELECT:', error);
           // Kirim respons error server jika pengambilan data gagal
-          return NextResponse.json({ message: 'Error mengambil data banner dari database', error: error.message }, { status: 500 });
+          return addCorsHeaders(NextResponse.json({ message: 'Error mengambil data banner dari database', error: error.message }, { status: 500 }));
       }
 
-      // ** Tambahkan header CORS di sini **
-      const headers = {
-        'Access-Control-Allow-Origin': 'http://localhost:3001', // * Mengizinkan dari origin manapun.
-                                             // Untuk produksi, ganti '*' dengan origin spesifik web Customer,
-                                             // contoh: 'http://localhost:3001' saat dev, 'https://customer.yourdomain.com' saat prod
-        'Access-Control-Allow-Methods': 'GET, OPTIONS', // Metode yang diizinkan
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization', // Header yang diizinkan
-      };
-
-      return NextResponse.json(data, { status: 200, headers: headers }); // Sertakan headers dalam respons
+      return addCorsHeaders(NextResponse.json(data, { status: 200})); // Sertakan headers dalam respons
 
   } catch (error: unknown) {
       // Menangkap error lain yang mungkin terjadi
@@ -119,20 +119,6 @@ export async function GET() {
       if (error instanceof Error) {
           errorMessage = error.message;
       }
-      return NextResponse.json({ message: 'Terjadi kesalahan server internal', error: errorMessage }, { status: 500 });
+      return addCorsHeaders(NextResponse.json({ message: 'Terjadi kesalahan server internal', error: errorMessage }, { status: 500 }));
   }
 }
-
-// Opsional: Tambahkan handler OPTIONS untuk CORS preflight requests
-export async function OPTIONS() {
-  const headers = {
-      'Access-Control-Allow-Origin': 'http://localhost:3001', // Ganti dengan origin spesifik seperti di atas
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Max-Age': '86400', // Cache preflight response selama 24 jam
-  };
-  return new Response(null, { status: 204, headers: headers }); // 204 No Content
-}
-
-// Secara default, App Router akan mengembalikan 405 Method Not Allowed
-// untuk metode yang tidak di-export. Jadi tidak perlu handler terpisah untuk 405.

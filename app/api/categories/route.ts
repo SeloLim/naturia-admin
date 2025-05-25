@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase/service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -14,21 +14,11 @@ const createCategorySchema = z.object({
 
 type CreateCategoryPayload = z.infer<typeof createCategorySchema>;
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const allowedOrigin = process.env.NEXT_PUBLIC_ALLOWED_ORIGIN!;
 
-if (!supabaseUrl || !supabaseServiceRoleKey) {
-  console.error(
-    "!!! Variabel lingkungan Supabase tidak disetel. Tidak dapat terhubung ke DB. !!!"
-  );
+if (!allowedOrigin) {
+  throw new Error("NEXT_PUBLIC_ALLOWED_ORIGIN is not defined");
 }
-
-const supabase = createClient(supabaseUrl!, supabaseServiceRoleKey!);
-
-const allowedOrigin =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:3001"
-    : "YOUR_PRODUCTION_FRONTEND_URL"; // <--- CHANGE THIS IN PRODUCTION!
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function OPTIONS(req: NextRequest) {

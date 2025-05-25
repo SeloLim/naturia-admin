@@ -12,10 +12,11 @@ const profileSchema = z.object({
 
 type UpdateProfilePayload = z.infer<typeof profileSchema>;
 
-const allowedOrigin =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:3001"
-    : "YOUR_PRODUCTION_FRONTEND_URL"; // <--- CHANGE THIS IN PRODUCTION!
+const allowedOrigin = process.env.NEXT_PUBLIC_ALLOWED_ORIGIN!;
+
+if (!allowedOrigin) {
+  throw new Error("NEXT_PUBLIC_ALLOWED_ORIGIN is not defined");
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function OPTIONS(req: NextRequest) {
