@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Naturia Admin - Panel Admin E-commerce Skincare
 
-## Getting Started
+Platform admin komprehensif untuk "Naturia," sebuah brand skincare fiktif. Berfungsi sebagai sistem manajemen dan portal API untuk aplikasi e-commerce pelanggan Naturia.
 
-First, run the development server:
+**Demo Langsung:** [https://naturia-admin.vercel.app/](https://naturia-admin.vercel.app/)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Fitur Utama
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+* **Dashboard:** Ringkasan analitik dan metrik penting ( Belum Ada ).
+* **Manajemen Produk:**
+    * Kategori Produk
+    * Jenis Kulit (untuk segmentasi produk)
+    * Daftar Produk (detail, harga, stok)
+    * Banner Promosi
+* **Manajemen Pesanan:**
+    * Daftar Pesanan Pelanggan
+    * Status Pembayaran
+    * Metode Pembayaran
+* **Manajemen Pengguna:** Pengelolaan akun pengguna (pelanggan).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Tampilan Aplikasi (Contoh Screenshot)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Teknologi yang Digunakan
 
-## Learn More
+* **Frontend & Backend:** Next.js (v15.3.1)
+* **Bahasa:** TypeScript (v5.8.3)
+* **Styling:** Tailwind CSS (v4.1.4)
+* **UI Components:** Shadcn/ui
+* **Database & Backend Services:** Supabase (PostgreSQL)
+* **Validasi Skema:** Zod
+* **Runtime:** Bun (v1.2.9)
+* **Linting:** ESLint
 
-To learn more about Next.js, take a look at the following resources:
+## Memulai Proyek (Getting Started)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1.  **Clone repositori:**
+    ```bash
+    git clone https://github.com/SeloLim/naturia-admin.git
+    cd naturia-admin
+    ```
 
-## Deploy on Vercel
+2.  **Install dependencies menggunakan Bun:**
+    ```bash
+    bun install
+    ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3.  **Setup Environment Variables:**
+    Buat file `.env.local` di root proyek dan tambahkan variabel environment yang dibutuhkan. Anda perlu mendapatkan kunci API dan URL dari akun Supabase Anda.
+    ```env
+    NEXT_PUBLIC_SUPABASE_URL=
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=
+    SUPABASE_SERVICE_ROLE_KEY=
+    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
+    NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=
+    ACCESS_TOKEN_SECRET=
+    REFRESH_TOKEN_SECRET=
+    EMAIL_CONFIRMATION_REDIRECT=
+    NEXT_PUBLIC_ALLOWED_ORIGIN=
+    ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4.  **Jalankan server pengembangan Next.js:**
+    ```bash
+    bun dev
+    ```
+    Buka [http://localhost:3000](http://localhost:3000) di browser Anda.
+---
