@@ -1,17 +1,6 @@
-// app/api/payment-methods/[id]/route.ts
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabase/service';
 import { NextResponse } from 'next/server';
 import { z } from "zod";
-
-// Initialize Supabase client (Server-side)
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!supabaseUrl || !supabaseServiceRoleKey) {
-  console.error("!!! Supabase environment variables not set. Cannot connect to DB. !!!");
-}
-
-const supabase = createClient(supabaseUrl!, supabaseServiceRoleKey!);
 
 // Schema for payment method validation
 const updatePaymentMethodSchema = z.object({
@@ -24,15 +13,19 @@ const updatePaymentMethodSchema = z.object({
   display_order: z.number().int().nullable().optional(),
 }).partial();
 
-// GET - Fetch a specific payment method
+type RouteParams = {
+  params: Promise<{ id: string }>;
+};
+
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteParams
 ) {
   try {
-    const id = parseInt(params.id);
-    
-    if (isNaN(id)) {
+    const awaitedParams = await params;
+    const { id } = awaitedParams;
+
+    if (isNaN(parseInt(id))) {
       return NextResponse.json(
         { message: 'Invalid payment method ID' },
         { status: 400 }
@@ -77,12 +70,13 @@ export async function GET(
 // PATCH - Update a payment method
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteParams
 ) {
   try {
-    const id = parseInt(params.id);
-    
-    if (isNaN(id)) {
+    const awaitedParams = await params;
+    const { id } = awaitedParams;
+
+    if (isNaN(parseInt(id))) {
       return NextResponse.json(
         { message: 'Invalid payment method ID' },
         { status: 400 }
@@ -196,12 +190,13 @@ export async function PATCH(
 // DELETE - Remove a payment method
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteParams
 ) {
   try {
-    const id = parseInt(params.id);
-    
-    if (isNaN(id)) {
+    const awaitedParams = await params;
+    const { id } = awaitedParams;
+
+    if (isNaN(parseInt(id))) {
       return NextResponse.json(
         { message: 'Invalid payment method ID' },
         { status: 400 }

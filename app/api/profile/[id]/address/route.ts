@@ -18,6 +18,10 @@ const addressSchema = z.object({
 
 const allowedOrigin = process.env.NEXT_PUBLIC_ALLOWED_ORIGIN!;
 
+type RouteParams = {
+  params: Promise<{ id: string }>;
+};
+
 if (!allowedOrigin) {
   throw new Error("NEXT_PUBLIC_ALLOWED_ORIGIN is not defined");
 }
@@ -42,7 +46,7 @@ function addCorsHeaders(response: NextResponse): NextResponse {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: RouteParams
 ) {
   const awaitedParams = await params;
   const { id } = awaitedParams;
@@ -85,7 +89,7 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: RouteParams
 ) {
   try {
     const awaitedParams = await params;

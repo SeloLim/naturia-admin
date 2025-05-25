@@ -17,10 +17,13 @@ const updateCategorySchema = z
 
 type UpdateCategoryPayload = z.infer<typeof updateCategorySchema>;
 
+type RouteParams = {
+  params: Promise<{ id: string }>;
+};
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteParams
 ) {
   const awaitedParams = await params;
   const { id } = awaitedParams;
@@ -109,7 +112,7 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: RouteParams) {
   const awaitedParams = await params;
   const { id } = awaitedParams;
 

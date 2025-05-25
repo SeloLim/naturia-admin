@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase/service";
 import { NextResponse } from "next/server"; // Gunakan NextResponse untuk respons
 import { z } from "zod";
 
@@ -34,25 +34,13 @@ const updateProductSchema = z
 
 type UpdateProductPayload = z.infer<typeof updateProductSchema>;
 
-// Inisialisasi klien Supabase (Server-side) - sama seperti sebelumnya
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!supabaseUrl || !supabaseServiceRoleKey) {
-  console.error(
-    "!!! Variabel lingkungan Supabase tidak disetel. Tidak dapat terhubung ke DB. !!!"
-  );
-}
-
-const configErrorResponse = NextResponse.json(
-  { message: "Server configuration error: Supabase keys not set." },
-  { status: 500 }
-);
-const supabase = createClient(supabaseUrl!, supabaseServiceRoleKey!);
+type RouteParams = {
+  params: Promise<{ id: string }>;
+};
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteParams
 ) {
   const awaitedParams = await params;
   const { id } = awaitedParams;
@@ -157,14 +145,8 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteParams
 ) {
-  // Lakukan cek config di sini
-  if (!supabase) {
-    console.error("!!! Supabase environment variables not set for DELETE. !!!");
-    return configErrorResponse;
-  }
-
   const awaitedParams = await params;
   const { id } = awaitedParams;
 

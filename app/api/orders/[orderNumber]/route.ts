@@ -12,6 +12,10 @@ if (!allowedOrigin) {
   throw new Error("NEXT_PUBLIC_ALLOWED_ORIGIN is not defined");
 }
 
+type RouteParams = {
+  params: Promise<{ orderNumber: string }>;
+};
+
 function addCorsHeaders(response: NextResponse): NextResponse {
   response.headers.set("Access-Control-Allow-Origin", allowedOrigin);
   response.headers.set("Access-Control-Allow-Methods", "GET, OPTIONS");
@@ -29,7 +33,7 @@ export async function OPTIONS() {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { orderNumber: string } }
+  { params }: RouteParams
 ) {
   try {
     const { orderNumber } = await params;
