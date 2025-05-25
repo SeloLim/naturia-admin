@@ -12,6 +12,10 @@ const profileSchema = z.object({
 
 type UpdateProfilePayload = z.infer<typeof profileSchema>;
 
+type RouteParams = {
+  params: Promise<{ id: string }>;
+};
+
 const allowedOrigin = process.env.NEXT_PUBLIC_ALLOWED_ORIGIN!;
 
 if (!allowedOrigin) {
@@ -39,7 +43,7 @@ function addCorsHeaders(response: NextResponse): NextResponse {
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteParams
 ) {
   const awaitedParams = await params;
   const { id } = awaitedParams;
@@ -97,7 +101,7 @@ export async function PATCH(
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteParams
 ) {
   const awaitedParams = await params;
   const { id } = awaitedParams;
