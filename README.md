@@ -6,7 +6,7 @@ Platform admin komprehensif untuk "Naturia," sebuah brand skincare fiktif. Berfu
 
 ## Fitur Utama
 
-* **Dashboard:** Ringkasan analitik dan metrik penting ( Belum Ada ).
+* **Dashboard**
 * **Manajemen Produk:**
     * Kategori Produk
     * Jenis Kulit (untuk segmentasi produk)
@@ -18,7 +18,8 @@ Platform admin komprehensif untuk "Naturia," sebuah brand skincare fiktif. Berfu
     * Metode Pembayaran
 * **Manajemen Pengguna:** Pengelolaan akun pengguna (pelanggan).
 
-## Tampilan Aplikasi (Contoh Screenshot)
+## Tampilan Aplikasi
+![image](https://github.com/user-attachments/assets/c24d40c7-bc78-46c1-a9f5-d4cbb6944680)
 
 ## Teknologi yang Digunakan
 
